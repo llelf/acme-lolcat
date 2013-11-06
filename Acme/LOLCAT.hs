@@ -28,6 +28,10 @@ pick m = (m!!) . unsafePerformIO $ randomRIO (0, length m - 1)
 
 p1 = string "can" <* string " a"
 
+
+--subAll 
+
+
 sub s to | Right r <- parseOnly p1 s = Just $ T.replace r to s
          | otherwise = Nothing
 
@@ -43,6 +47,9 @@ tr :: IsString s => s -> s
 tr = id
 
 wbound = endOfInput <|> (space >> return ())
+
+word w = tail <|> (space >> tail)
+    where tail = string w <* wbound
 
 language = [
   ("what", ["wut", "whut"]),
@@ -74,7 +81,7 @@ language = [
   ("age", ["uj"]),
   ("like", ["likes", "liek"]),
   ("love", ["loves", "lub", "lubs", "luv"]),
---   ("\\bis\\b", ["ar teh","ar"]),
+  (word "is", ["ar teh","ar"]),
  ("nd" <* wbound, ["n"]),
   ("who", ["hoo"]),
  ("'", [""]),
@@ -89,7 +96,7 @@ language = [
    ("tty\\b", ["tteh"]),
  ("were", ["was"]),
   ("ok" <* wbound, ["k", "kay"]),
-  -- ('\\ba\\b'   => q()),
+  (word "a", [""]),
  ("ym", ["im"]),
  ("thy" <* wbound, ["fee"]),
  -- ("\\wly\\w", ["li"]),
