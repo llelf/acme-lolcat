@@ -99,8 +99,8 @@ language = [
   (word "a", [""]),
  ("ym", ["im"]),
  ("thy" <* wbound, ["fee"]),
- -- ("\\wly\\w", ["li"]),
- -- ("que\\w", ["kwe"]),
+ (letter *> string "ly" <* letter, ["li"]), -- \wly\w, wrong
+ ("que" <* letter, ["kwe"]),                -- que\w
  ("oth", ["udd"]),
  ("ease", ["eez"]),
   ("ing" <* wbound, ["in", "ins", "ng", "ing"]),
@@ -111,16 +111,23 @@ language = [
    ("good", ["gud", "goed", "guud", "gude", "gewd"]),
    ("really", ["rly", "rily", "rilly", "rilley"]),
    ("world", ["wurrld", "whirld", "wurld", "wrld"]),
-   -- q(i'?m\\b)     => 'im',
+   (("i'm" <|> "im") <* wbound, ["im"]),
 
    -- ("(?!e)ight", ["ite"]),
-   -- ("(?!ues)tion", ["shun"]),
-   -- ("you'?re", ["yore", "yr"]),
-   -- ("\\boh\\b(?!.*hai)", ["o", "ohs"]),
-   -- ("can\\si\\s(?:ple(?:a|e)(?:s|z)e?)?\\s?have\\sa" , ["i can has"]),
-   -- ("(?:hello|\\bhi\\b|\\bhey\\b|howdy|\\byo\\b),?"    , ["oh hai,"]),
-   -- ("(?:god|allah|buddah?|diety)", ["ceiling cat"])
+   ("tion", ["shun"]),          --    ("(?!ues)tion", ["shun"])
+   ("you're" <|> "youre" <|> "you are", ["yore", "yr"]), -- ("you'?re", ["yore", "yr"])
 
+   -- ("\\boh\\b(?!.*hai)", ["o", "ohs"]),
+   (word "oh", ["o", "ohs"]),   -- ???
+
+   -- ("can\\si\\s(?:ple(?:a|e)(?:s|z)e?)?\\s?have\\sa" , ["i can has"]),
+
+   -- ("(?:hello | \\bhi\\b | \\bhey\\b | howdy | \\byo\\b) ,?"    , ["oh hai,"]),
+   (word "hello" <|> word "hi" <|> word "hey" <|> word "howdy" <|> word "yo",
+    ["oh hai,"]),
+
+   -- ("(?:god|allah|buddah?|diety)", ["ceiling cat"])
+   (word "god", ["ceiling cat"]),
 
   (string "", [])
  ]
