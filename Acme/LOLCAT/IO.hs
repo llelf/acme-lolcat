@@ -1,4 +1,4 @@
-module Acme.LOLCAT.MAH.IO where
+module Acme.LOLCAT.IO where
 
 import System.IO.Unsafe (unsafePerformIO)
 

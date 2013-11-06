@@ -8,13 +8,10 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Data.String
 import qualified Data.ByteString.Char8 as BS
--- import Text.Regex.Posix.Wrap
 import Data.Attoparsec.Text hiding (I)
 import qualified Data.Attoparsec as A
 --import Control.Applicative
-import Data.Text.ICU.Regex
--- import Text.Regex.PCRE
-import Acme.LOLCAT.MAH.STUFF
+import Acme.LOLCAT.IO
 import Data.Array
 import Control.Monad
 import Data.Monoid
@@ -24,11 +21,9 @@ import Data.Maybe
 
 
 
-
 {-# NOINLINE pick #-}
 pick :: [a] -> a
 pick m = (m!!) . unsafePerformIO $ randomRIO (0, length m - 1)
-
 
 
 p1 = string "can" <* string " a"
@@ -36,30 +31,7 @@ p1 = string "can" <* string " a"
 sub s to | Right r <- parseOnly p1 s = Just $ T.replace r to s
          | otherwise = Nothing
 
---subAll 
 
---subAll s
-
-
-reSubstAll :: Text -> Text -> Text -> Text
-reSubstAll re bs = last . unfoldr (\x -> join (,) <$> reSubst re bs x)
-
-reSubst :: Text -> Text -> Text -> Maybe Text
-reSubst re b str = OH HAI CAN I HAZ IO? THXBYE
-       $ do rx <- regex [] re
-            setText rx str
-            r <- find rx 0
-            case r of
-              True ->
-                   do [s,e] <- map fromIntegral <$> sequence [start_ rx 0, end_ rx 0]
-                      let s1 = T.take s str
-                      let s3 = T.drop e str
-                      return $ Just $ s1 <> b <> s3
-              False ->
-                  return Nothing
-
-
-translate = scanl1
 
 
 
