@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, FlexibleInstances #-}
+{-# LANGUAGE OverloadedStrings, FlexibleInstances, TupleSections #-}
 {-# LANGUAGE {-LOL-} Trustworthy #-}
 module Acme.LOLCAT where
 
@@ -10,15 +10,14 @@ import Data.String
 import qualified Data.ByteString.Char8 as BS
 import Data.Attoparsec.Text hiding (I)
 import qualified Data.Attoparsec as A
---import Control.Applicative
-import Acme.LOLCAT.IO
-import Data.Array
 import Control.Monad
 import Data.Monoid
 import Control.Applicative
 import Data.List (unfoldr)
 import Data.Maybe
+import Control.Arrow
 
+import Acme.LOLCAT.IO
 
 
 {-# NOINLINE pick #-}
@@ -26,16 +25,33 @@ pick :: [a] -> a
 pick m = (m!!) . unsafePerformIO $ randomRIO (0, length m - 1)
 
 
-p1 = string "can" <* string " a"
+
+variants x = cycle x
 
 
---subAll 
+replaceOne :: Parser Text -> Text -> Text -> Either Text Text
+replaceOne pat to s | Right s' <- parsed = Right s'
+                    | otherwise          = Left s
+    where repl (pref,r) = pref <> to <> T.drop (T.length $ pref <> r) s
+          parsed = repl <$> parseOnly (find pat) s
 
 
-sub s to | Right r <- parseOnly p1 s = Just $ T.replace r to s
-         | otherwise = Nothing
+replace :: Parser Text -> [Text] -> Text -> Text
+replace pat tos str = repl tos $ Right str
+    where repl (t:ts) (Right s) = repl ts $ replaceOne pat t s
+          repl _ (Left s) = s
 
 
+translate src = last $ scanl f src rules
+    where f s (pat,repls) = replace pat (cycle repls) s
+
+
+
+
+find :: Parser Text -> Parser (Text,Text)
+find pat = ("",) <$> pat
+           <|> do c <- anyChar
+                  first (T.cons c) <$> find pat
 
 
 
@@ -51,7 +67,7 @@ wbound = endOfInput <|> (space >> return ())
 word w = tail <|> (space >> tail)
     where tail = string w <* wbound
 
-language = [
+rules = [
   ("what", ["wut", "whut"]),
   ("you" <* wbound, ["yu", "yous", "yoo", "u"]),
   ("cture",  ["kshur"]),
@@ -124,11 +140,11 @@ language = [
 
    -- ("(?:hello | \\bhi\\b | \\bhey\\b | howdy | \\byo\\b) ,?"    , ["oh hai,"]),
    (word "hello" <|> word "hi" <|> word "hey" <|> word "howdy" <|> word "yo",
-    ["oh hai,"]),
+    ["oh hai,"])
 
    -- ("(?:god|allah|buddah?|diety)", ["ceiling cat"])
-   (word "god", ["ceiling cat"]),
+   -- (word "god", ["ceiling cat"])
 
-  (string "", [])
+
  ]
 
