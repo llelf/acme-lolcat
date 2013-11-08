@@ -11,14 +11,14 @@ import Data.Text (Text)
 import qualified Data.Text as T
 
 import Text.Parsec
-import Text.Parsec.Text
+import Text.Parsec.Text()
 
-import Data.String (IsString(..))
-import Data.Monoid
 import Control.Applicative ((<$>),(<*),(<*>))
 import Control.Arrow
-import Data.Char
 import Control.Monad
+import Data.String (IsString(..))
+import Data.Monoid
+import Data.Char
 
 import System.Random
 import qualified System.Random.Shuffle as SHU

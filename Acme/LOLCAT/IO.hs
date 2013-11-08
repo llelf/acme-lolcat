@@ -8,7 +8,7 @@ module Acme.LOLCAT.IO (OH(..),HAI(..),I(..),CAN(..),HAZ(..),
 
 import Prelude hiding (IO)
 import System.IO.Unsafe (unsafePerformIO)
-import Control.Monad
+
 
 data HAI a b c d e = HAI a b c d e
 data OH a b c d e = OH a b c d e
