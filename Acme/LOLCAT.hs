@@ -38,10 +38,24 @@ replace pat tos str = repl tos $ Right str
           repl _ (Left s) = s
 
 
-translate src = last $ scanl f src rules
+translateT src = last $ scanl f src rules
     where f s (pat,repls) = replace pat (cycle repls) s
 
+translate :: FromToText s => s -> s
+translate = fromText . translateT . toText
 
+
+class FromToText a where
+    fromText :: Text -> a
+    toText :: a -> Text
+
+instance FromToText Text where
+    fromText = id
+    toText = id
+
+instance FromToText String where
+    fromText = T.unpack
+    toText = T.pack
 
 
 find :: Parser Text -> Parser (Text,Text)
@@ -49,10 +63,6 @@ find pat = ("",) <$> pat
            <|> do c <- anyChar
                   first (T.cons c) <$> find pat
 
-
-
-tr :: IsString s => s -> s
-tr = id
 
 wbound = endOfInput <|> (space >> return ())
 
