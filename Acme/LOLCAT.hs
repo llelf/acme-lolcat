@@ -6,12 +6,20 @@ import System.Random
 import System.IO.Unsafe
 import Data.Text (Text)
 import qualified Data.Text as T
-import Data.Attoparsec.Text hiding (I)
-import qualified Data.Attoparsec as A
+-- import Data.Attoparsec.Text hiding (I)
+-- import qualified Data.Attoparsec as A
+
+import Text.Parsec
+--import Text.Parsec.Text
+import Text.Parsec.String
+
 import Data.String
 import Data.Monoid
-import Control.Applicative
+import Control.Applicative ((<$>),(<*))
 import Control.Arrow
+import Data.Char
+import Control.Monad
+
 
 import Acme.LOLCAT.IO
 
@@ -25,14 +33,17 @@ pick m = (m!!) . unsafePerformIO $ randomRIO (0, length m - 1)
 variants x = cycle x
 
 
-replaceOne :: Parser Text -> Text -> Text -> Either Text Text
+replaceOne :: Parser' String -> String -> String -> Either String String
 replaceOne pat to s | Right s' <- parsed = Right s'
                     | otherwise          = Left s
-    where repl (pref,r) = pref <> to <> T.drop (T.length $ pref <> r) s
-          parsed = repl <$> parseOnly (find pat) s
+    where repl (pref,r) = pref ++ to ++ drop (length $ pref ++ r) s
+          parsed = repl <$> myrun (find pat) s
+
+myrun p s = runP p ' ' "" s
 
 
-replace :: Parser Text -> [Text] -> Text -> Text
+
+replace :: Parser' String -> [String] -> String -> String
 replace pat tos str = repl tos $ Right str
     where repl (t:ts) (Right s) = repl ts $ replaceOne pat t s
           repl _ (Left s) = s
@@ -41,8 +52,8 @@ replace pat tos str = repl tos $ Right str
 translateT src = last $ scanl f src rules
     where f s (pat,repls) = replace pat (cycle repls) s
 
-translate :: FromToText s => s -> s
-translate = fromText . translateT . toText
+-- translate :: FromToText s => s -> s
+-- translate = fromText . translateT . toText
 
 
 class FromToText a where
@@ -58,18 +69,30 @@ instance FromToText String where
     toText = T.pack
 
 
-find :: Parser Text -> Parser (Text,Text)
-find pat = ("",) <$> pat
+type Parser' = Parsec String Char
+
+find :: Parser' String -> Parser' (String,String)
+find pat = try (("",) <$> pat)
            <|> do c <- anyChar
-                  first (T.cons c) <$> find pat
+                  putState c
+                  first (c:) <$> find pat
 
 
-wbound = endOfInput <|> (space >> return ())
+wend = notFollowedBy letter
 
-word w = tail <|> (space >> tail)
-    where tail = string w <* wbound
+word s = do c <- getState
+            guard . not . isAlpha $ c
+            string s <* wend
 
-wEnds s = string s <* wbound
+
+wEnds s = string s <* wend
+
+
+instance IsString (Parser' String) where
+    fromString = string
+
+
+rules :: [(Parser' String, [String])]
 
 rules = [
   ("what",                      ["wut", "whut"]),
@@ -119,7 +142,7 @@ rules = [
   (word "a",			[""]),
   ("ym",			["im"]),
   (wEnds "thy",			["fee"]),
-  (letter *> string "ly" <* letter,	["li"]), -- \wly\w, wrong
+  (letter >> string "ly" <* letter,	["li"]), -- \wly\w, wrong
   ("que" <* letter,		["kwe"]),                -- que\w
   ("oth",			["udd"]),                          -- only start?
   ("ease",			["eez"]),
@@ -131,7 +154,7 @@ rules = [
   ("good",			["gud", "goed", "guud", "gude", "gewd"]),
   ("really",			["rly", "rily", "rilly", "rilley"]),
   ("world",			["wurrld", "whirld", "wurld", "wrld"]),
-  (("i'm" <|> "im") <* wbound,	["im"]),
+  (word "i'm" <|> word "im",	["im"]),
 
    -- ("(?!e)ight",			["ite"]),
    ("tion",			["shun"]),          --    ("(?!ues)tion",["shun"])
