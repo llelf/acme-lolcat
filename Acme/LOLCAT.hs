@@ -8,8 +8,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 
 import Text.Parsec
---import Text.Parsec.Text
-import Text.Parsec.String
+import Text.Parsec.Text
 
 import Data.String
 import Data.Monoid
@@ -31,17 +30,17 @@ pick m = (m!!) . unsafePerformIO $ randomRIO (0, length m - 1)
 variants x = cycle x
 
 
-replaceOne :: Parser' String -> String -> String -> Either String String
+--replaceOne :: Parser' String -> String -> String -> Either String String
 replaceOne pat to s | Right s' <- parsed = Right s'
                     | otherwise          = Left s
-    where repl (pref,r) = pref ++ to ++ drop (length $ pref ++ r) s
+    where repl (pref,r) = pref <> to <> T.drop (T.length pref + length r) s
           parsed = repl <$> myrun (find pat) s
 
 myrun p s = runP p ' ' "" s
 
 
 
-replace :: Parser' String -> [String] -> String -> String
+replace :: Parser' String -> [Text] -> Text -> Text
 replace pat tos str = repl tos $ Right str
     where repl (t:ts) (Right s) = repl ts $ replaceOne pat t s
           repl _ (Left s) = s
@@ -67,13 +66,13 @@ instance FromToText String where
     toText = T.pack
 
 
-type Parser' = Parsec String Char
+type Parser' = Parsec Text Char
 
-find :: Parser' String -> Parser' (String,String)
+find :: Parser' String -> Parser' (Text,String)
 find pat = try (("",) <$> pat)
            <|> do c <- anyChar
                   putState c
-                  first (c:) <$> find pat
+                  first (T.cons c) <$> find pat
 
 
 wend = notFollowedBy letter
@@ -96,7 +95,7 @@ instance IsString (Parser' String) where
     fromString = string
 
 
-rules :: [(Parser' String, [String])]
+rules :: [(Parser' String, [Text])]
 
 rules = [
   ("what",                      ["wut", "whut"]),
