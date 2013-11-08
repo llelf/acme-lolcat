@@ -3,7 +3,7 @@
 --   License:     BSD
 --   Maintainer:  me@lelf.lu
 
-{-# LANGUAGE FlexibleInstances, TupleSections #-}
+{-# LANGUAGE OverloadedStrings, FlexibleInstances, TupleSections #-}
 {-# LANGUAGE {-LOL-} Trustworthy #-}
 module Acme.LOLCAT (translate) where
 
