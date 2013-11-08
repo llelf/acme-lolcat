@@ -6,15 +6,12 @@ import System.Random
 import System.IO.Unsafe
 import Data.Text (Text)
 import qualified Data.Text as T
-import Data.String
 import qualified Data.ByteString.Char8 as BS
 import Data.Attoparsec.Text hiding (I)
 import qualified Data.Attoparsec as A
-import Control.Monad
+import Data.String
 import Data.Monoid
 import Control.Applicative
-import Data.List (unfoldr)
-import Data.Maybe
 import Control.Arrow
 
 import Acme.LOLCAT.IO
