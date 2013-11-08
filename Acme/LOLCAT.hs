@@ -6,7 +6,6 @@ import System.Random
 import System.IO.Unsafe
 import Data.Text (Text)
 import qualified Data.Text as T
-import qualified Data.ByteString.Char8 as BS
 import Data.Attoparsec.Text hiding (I)
 import qualified Data.Attoparsec as A
 import Data.String
@@ -50,10 +49,6 @@ find pat = ("",) <$> pat
            <|> do c <- anyChar
                   first (T.cons c) <$> find pat
 
-
-
-class ToBS a where toBS :: a -> BS.ByteString
-instance ToBS String where toBS = BS.pack
 
 
 tr :: IsString s => s -> s
