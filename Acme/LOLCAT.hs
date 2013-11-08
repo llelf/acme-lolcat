@@ -4,7 +4,7 @@
 --   Maintainer:  me@lelf.lu
 
 {-# LANGUAGE OverloadedStrings, FlexibleInstances, TupleSections #-}
-{-# LANGUAGE {-LOL-} Trustworthy #-}
+{-# LANGUAGE Trustworthy #-}
 module Acme.LOLCAT (translate) where
 
 import Data.Text (Text)

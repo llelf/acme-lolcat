@@ -2,6 +2,7 @@
 --   Copyright:   (c) 2013 Anton Nikishaev
 --   License:     BSD
 --   Maintainer:  me@lelf.lu
+{-# LANGUAGE Unsafe #-}
 
 module Acme.LOLCAT.IO (OH(..),HAI(..),I(..),CAN(..),HAZ(..),
                        IO(..),YO(..),(?),THXBYE(..)) where
