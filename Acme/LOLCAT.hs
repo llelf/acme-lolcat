@@ -7,21 +7,20 @@
 {-# LANGUAGE {-LOL-} Trustworthy #-}
 module Acme.LOLCAT (translate) where
 
-import System.Random
-import System.IO.Unsafe
 import Data.Text (Text)
 import qualified Data.Text as T
 
 import Text.Parsec
 import Text.Parsec.Text
 
-import Data.String
+import Data.String (IsString(..))
 import Data.Monoid
 import Control.Applicative ((<$>),(<*),(<*>))
 import Control.Arrow
 import Data.Char
 import Control.Monad
 
+import System.Random
 import qualified System.Random.Shuffle as SHU
 
 import Acme.LOLCAT.IO
