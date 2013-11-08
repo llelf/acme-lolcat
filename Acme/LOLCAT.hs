@@ -5,7 +5,7 @@
 
 {-# LANGUAGE OverloadedStrings, FlexibleInstances, TupleSections #-}
 {-# LANGUAGE Trustworthy #-}
-module Acme.LOLCAT (translate) where
+module Acme.LOLCAT (translate, KindaText()) where
 
 import Data.Text (Text)
 import qualified Data.Text as T
