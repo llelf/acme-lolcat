@@ -1,4 +1,7 @@
-module Acme.LOLCAT.IO where
+-- | Module:      Acme.LOLCAT
+--   Copyright:   (c) 2013 Anton Nikishaev
+--   License:     BSD
+--   Maintainer:  me@lelf.lu
 
 module Acme.LOLCAT.IO (OH(..),HAI(..),I(..),CAN(..),HAZ(..),
                        IO(..),YO(..),(?),THXBYE(..)) where

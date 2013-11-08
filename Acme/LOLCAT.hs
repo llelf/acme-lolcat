@@ -1,5 +1,7 @@
-
-
+-- | Module:      Acme.LOLCAT
+--   Copyright:   (c) 2013 Anton Nikishaev
+--   License:     BSD
+--   Maintainer:  me@lelf.lu
 
 {-# LANGUAGE OverloadedStrings, FlexibleInstances, TupleSections #-}
 {-# LANGUAGE {-LOL-} Trustworthy #-}
