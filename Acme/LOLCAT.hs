@@ -20,17 +20,19 @@ import Control.Arrow
 import Data.Char
 import Control.Monad
 
+import qualified System.Random.Shuffle as SHU
 
 import Acme.LOLCAT.IO
 
 
-{-# NOINLINE pick #-}
-pick :: [a] -> a
-pick m = (m!!) . unsafePerformIO $ randomRIO (0, length m - 1)
+variants' xs = cycle xs
 
+{-# NOINLINE shuffle #-}
+shuffle xs = do io <- OH HAI I CAN HAZ IO? THXBYE
+                SHU.shuffle' xs (length xs) (io newStdGen)
 
+variants xs = shuffle xs ++ variants xs
 
-variants x = cycle x
 
 
 --replaceOne :: Parser' String -> String -> String -> Either String String
@@ -50,7 +52,7 @@ replace pat tos str = repl tos $ Right str
 
 
 translateT src = last $ scanl f src rules
-    where f s (pat,repls) = replace pat (cycle repls) s
+    where f s (pat,repls) = replace pat (variants repls) s
 
 
 translate :: KindaText s => s -> s
