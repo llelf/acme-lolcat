@@ -1,6 +1,9 @@
+
+
+
 {-# LANGUAGE OverloadedStrings, FlexibleInstances, TupleSections #-}
 {-# LANGUAGE {-LOL-} Trustworthy #-}
-module Acme.LOLCAT where
+module Acme.LOLCAT (translate) where
 
 import System.Random
 import System.IO.Unsafe
@@ -49,19 +52,20 @@ replace pat tos str = repl tos $ Right str
 translateT src = last $ scanl f src rules
     where f s (pat,repls) = replace pat (cycle repls) s
 
--- translate :: FromToText s => s -> s
--- translate = fromText . translateT . toText
+
+translate :: KindaText s => s -> s
+translate = fromText . translateT . toText
 
 
-class FromToText a where
+class KindaText a where
     fromText :: Text -> a
     toText :: a -> Text
 
-instance FromToText Text where
+instance KindaText Text where
     fromText = id
     toText = id
 
-instance FromToText String where
+instance KindaText String where
     fromText = T.unpack
     toText = T.pack
 
