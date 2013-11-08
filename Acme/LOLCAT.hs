@@ -6,8 +6,6 @@ import System.Random
 import System.IO.Unsafe
 import Data.Text (Text)
 import qualified Data.Text as T
--- import Data.Attoparsec.Text hiding (I)
--- import qualified Data.Attoparsec as A
 
 import Text.Parsec
 --import Text.Parsec.Text
@@ -82,13 +80,14 @@ wend = notFollowedBy letter
 
 word s = do c <- getState
             guard . not . isAlpha $ c
-            (++) <$> string s <*> puncts
+            string s <* wend
 
 inside s = do a <- getState
               guard (isAlpha a)
               string s <* letter
 
-puncts = many1 (space)
+
+wordPuncts w = (++) <$> word w <*> many1 space
 
 wEnds s = string s <* wend
 
@@ -108,7 +107,10 @@ rules = [
   ("more",			["moar"]),
   ("my",			["muh", "mah"]),
   ("are",			["r", "is", "ar"]),
+  (word "a",			[""]),
   ("eese",			["eez"]),
+  ("catamorphi",		["cat-a-murrphi"]),
+  ("morphi",			["murrphi"]),
   ("ph",			["f"]),
   (wEnds "as",			["az"]),
   ("seriously",			["srsly"]),
@@ -146,8 +148,8 @@ rules = [
   ("ym",			["im"]),
   (wEnds "thy",			["fee"]),
   (inside "ly",			["li"]),
-  ("que" <* letter,		["kwe"]),                -- que\w
-  ("oth",			["udd"]),                          -- only start?
+  ("que" <* letter,		["kwe"]),
+  ("oth",			["udd"]), -- ?
   ("ease",			["eez"]),
   (wEnds "ing",			["in", "ins", "ng", "ing"]),
   ("your",			["yur", "ur", "yore", "yoar"]),
@@ -162,26 +164,27 @@ rules = [
    -- ("(?!e)ight",			["ite"]),
    ("tion",			["shun"]),          --    ("(?!ues)tion",["shun"])
    ("you're" <|> "youre" <|> "you are",
-				["yore", "yr"]), -- ("you'?re",["yore", "yr"])
+				["yore", "yr"]),
 
    -- ("\\boh\\b(?!.*hai)",			["o", "ohs"]),
    (word "oh",			["o", "ohs"]),   -- ???
 
    -- ("can" <+> spaces, [""]),
 
-  (join<$>sequence [word "can",
-                    word "i",
-                    word "have",
-                    word "a"],	["i can has "]),
+  (join<$>sequence [wordPuncts "can",
+                    wordPuncts "i",
+                    wordPuncts "have",
+                    word "a"],	["i can has"]),
 
-  (word "a",			[""]),
   ("have",			["has", "hav", "haz a"]),
 
-   (word "hello" <|> word "hi"
+  (word "hello" <|> word "hi"
     <|> word "hey" <|> word "howdy" <|> word "yo",
 				["oh hai"]),
 
-   (word "god",			["ceiling cat"])
+  (word "god",			["ceiling cat"])
+
+
 
  ]
 
