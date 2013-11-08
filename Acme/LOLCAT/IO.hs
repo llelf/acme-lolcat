@@ -1,6 +1,11 @@
 module Acme.LOLCAT.IO where
 
+module Acme.LOLCAT.IO (OH(..),HAI(..),I(..),CAN(..),HAZ(..),
+                       IO(..),YO(..),(?),THXBYE(..)) where
+
+import Prelude hiding (IO)
 import System.IO.Unsafe (unsafePerformIO)
+import Control.Monad
 
 data HAI a b c d e = HAI a b c d e
 data OH a b c d e = OH a b c d e
@@ -11,5 +16,5 @@ data CAN = CAN
 data HAZ = HAZ
 data THXBYE = THXBYE
 
-_?_ = unsafePerformIO
+_?_ = return unsafePerformIO
 
