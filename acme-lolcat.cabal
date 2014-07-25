@@ -2,7 +2,7 @@ name:                acme-lolcat
 version:             0.1
 homepage:            https://github.com/llelf/acme-lolcat
 synopsis:            LOLSPEAK translator
---description:
+description:	     LOLSPEAK translator
 license:             BSD3
 license-file:        LICENSE
 author:              Antonio Nikishaev <me@lelf.lu>
@@ -10,8 +10,8 @@ maintainer:          Antonio Nikishaev <me@lelf.lu>
 copyright:           2013,2014 Antonio Nikishaev
 category:            Acme
 build-type:          Simple
-cabal-version:       >=1.18
-extra-source-files:  README
+cabal-version:       >=1.14
+extra-source-files:  README.markdown
 tested-with:         GHC==7.6.3, GHC==7.8.3, GHC==7.9.20140419
 
 library
