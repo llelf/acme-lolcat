@@ -6,9 +6,9 @@ description:
         LOL
 license:             BSD3
 license-file:        LICENSE
-author:              Anton Nikishaev <me@lelf.lu>
-maintainer:          Anton Nikishaev <me@lelf.lu>
-copyright:           2013 Anton Nikishaev
+author:              Antonio Nikishaev <me@lelf.lu>
+maintainer:          Antonio Nikishaev <me@lelf.lu>
+copyright:           2013,2014 Antonio Nikishaev
 category:            Acme
 build-type:          Simple
 cabal-version:       >=1.18

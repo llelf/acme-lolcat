@@ -1,5 +1,5 @@
 -- | Module:      Acme.LOLCAT
---   Copyright:   (c) 2013 Anton Nikishaev
+--   Copyright:   (c) 2013 Antonio Nikishaev
 --   License:     BSD
 --   Maintainer:  me@lelf.lu
 {-# LANGUAGE Unsafe #-}
