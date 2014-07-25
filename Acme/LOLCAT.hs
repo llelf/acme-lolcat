@@ -136,7 +136,7 @@ rules = [
  (wEnds "om" <|> wEnds "ome",	["um"]),
  (wEnds "of",			["of", "ov", "of"]),
  ("uestion",			["wesjun"]),
- ("want",			["wants"]),
+ (word "want",			["wants"]),
  (wEnds "ead",			["edd"]),
  ("ucke",			["ukki", "ukke"]),
  ("sion",			["shun"]),
