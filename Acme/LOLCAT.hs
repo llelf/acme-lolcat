@@ -148,6 +148,10 @@ wordEnd = notFollowedBy letter
 
 
 
+main = forever $ getLine >>= putStrLn . translate
+
+
+
 rules :: [(Parser String, [Text])]
 
 rules = [
