@@ -1,12 +1,12 @@
 -- | Module:      Acme.LOLCAT
---  Copyright:   (c) 2013 Anton Nikishaev
+--  Copyright:   (c) 2013 Antonio Nikishaev
 --  License:     BSD
 --  Maintainer:  me@lelf.lu
 --
 --
 -- LOLCAT translator.
 --
--- Roughly based on <https://metacpan.org/pod/Acme::LOLCAT Acme::LOLCAT>
+-- Roughly based on Perl's <https://metacpan.org/pod/Acme::LOLCAT Acme::LOLCAT>
 
 {-# LANGUAGE OverloadedStrings, FlexibleInstances, TupleSections #-}
 {-# LANGUAGE Trustworthy #-}
@@ -27,7 +27,7 @@ import Data.Monoid
 import Data.Char
 
 import System.Random
-import qualified System.Random.Shuffle as SHU
+import qualified System.Random.Shuffle as SHU (shuffle')
 
 import Acme.LOLCAT.IO
 
@@ -36,32 +36,41 @@ import Acme.LOLCAT.IO
 shuffle xs = do io <- OH HAI I CAN HAZ IO? THXBYE
                 SHU.shuffle' xs (length xs) (io newStdGen)
 
+
 -- | Given a list, return a infinity list of its elements in random order
 variants xs = shuffle xs ++ variants xs
 variants' xs = cycle xs
 
 
-
-replaceOne :: Parser String -> Text -> Text -> Either Text Text
+-- | Replace the part that matched by pattern PAT with TO in S.
+-- Return Right NEW-STRING or Left ORIGINAL if nothing matches.
+replaceOne :: Pattern -> Text -> Text -> Either Text Text
 replaceOne pat to s | Right s' <- parsed = Right s'
                     | otherwise          = Left s
     where repl (pref,r) = pref <> to <> T.drop (T.length pref + length r) s
-          parsed = repl <$> myrun (find pat) s
-
-myrun p s = runP p Punct "" s
+          parsed = repl <$> myRun (find pat) s
 
 
+-- | Run parser
+myRun :: Parser a -> Text -> Either ParseError a
+myRun p s = runP p Punct "" s
 
-replace :: Parser String -> [Text] -> Text -> Text
+
+-- | Replace PAT with TOS (cycling) in STR
+replace :: Pattern -> [Text] -> Text -> Text
 replace pat tos str = repl (cycle tos) $ Right str
     where repl (t:ts) (Right s) = repl ts $ replaceOne pat t s
-          repl _ (Left s) = s
+          repl _ (Left s)       = s
 
 
+
+translateT :: Text -> Text
 translateT src = T.toUpper $ last $ scanl f src rules
     where f s (pat,repls) = replace pat (variants repls) s
 
 
+
+-- | Text/String-like things
 class KindaText a where
     fromText :: Text -> a
     toText :: a -> Text
@@ -73,6 +82,7 @@ instance KindaText Text where
 instance KindaText String where
     fromText = T.unpack
     toText = T.pack
+
 
 translate :: KindaText s => s -> s
 translate = fromText . translateT . toText
@@ -88,25 +98,35 @@ type Pattern = Parser String
 instance IsString (Parser String) where
     fromString = string
 
-find :: Parser String -> Parser (Text,String)
+
+-- | Given a parser for X returns a new parser for (HEAD,X)
+-- where HEAD is matched string's part before X.
+-- 
+-- Weird? This is Acme.*.
+find :: Pattern -> Parser (Text,String)
 find pat = try (("",) <$> pat)
            <|> do c <- anyChar
                   putState $ if isLetter c then Word else Punct
                   first (T.cons c) <$> find pat
 
 
-wend = notFollowedBy letter
-
+-- | word S exactly
 word s = do Punct <- getState
             string s <* wend
 
+-- | S is inside word
 inside s = do Word <- getState
               string s <* letter
 
-
+-- | word S and then any punctuations
 wordPuncts w = (++) <$> word w <*> many1 space
 
+-- | word ending with S
 wEnds s = string s <* wend
+
+
+wend = notFollowedBy letter
+
 
 
 
