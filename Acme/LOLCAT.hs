@@ -16,8 +16,9 @@ module Acme.LOLCAT (translate, KindaText()) where
 import Data.Text (Text)
 import qualified Data.Text as T
 
-import Text.Parsec
-import Text.Parsec.Text()
+import Text.Parsec hiding (string)
+import Text.Parsec.Text ()
+import qualified Text.Parsec as Parsec (string)
 
 import Control.Applicative ((<$>),(<*),(<*>))
 import Control.Arrow
@@ -47,7 +48,7 @@ variants' xs = cycle xs
 replaceOne :: Pattern -> Text -> Text -> Either Text Text
 replaceOne pat to s | Right s' <- parsed = Right s'
                     | otherwise          = Left s
-    where repl (pref,r) = pref <> to <> T.drop (T.length pref + length r) s
+    where repl (pref,r) = pref <> to <> T.drop (T.length pref + T.length r) s
           parsed = repl <$> myRun (find pat) s
 
 
@@ -93,17 +94,17 @@ type Parser = Parsec Text ParserState
 data ParserState = Word | Punct deriving Eq
 
 
-type Pattern = Parser String
+type Pattern = Parser Text
 
-instance IsString (Parser String) where
-    fromString = string
+instance IsString Pattern where
+    fromString = string . T.pack
 
 
 -- | Given a parser for X returns a new parser for (HEAD,X)
 -- where HEAD is matched string's part before X.
 -- 
 -- Weird? This is Acme.*.
-find :: Pattern -> Parser (Text,String)
+find :: Pattern -> Parser (Text,Text)
 find pat = try (("",) <$> pat)
            <|> do c <- anyChar
                   putState $ if isLetter c then Word else Punct
@@ -119,18 +120,22 @@ inside s = do Word <- getState
               string s <* letter
 
 -- | word S and then any punctuations
-wordPuncts w = (++) <$> word w <*> many1 space
+wordPuncts w = (<>) <$> word w <*> many1' space
 
 -- | word ending with S
 wEnds s = string s <* wend
 
 
 wend = notFollowedBy letter
+many1' = fmap T.pack . many1
+
+string :: Text -> Parser Text
+string = fmap T.pack . Parsec.string . T.unpack
 
 
 
 
-rules :: [(Parser String, [Text])]
+rules :: [(Pattern, [Text])]
 
 rules = [
  ("what",                       ["wut", "whut"]),
@@ -205,10 +210,12 @@ rules = [
 
 -- ("can" <+spaces, [""]),
 
- (join<$>sequence [wordPuncts "can",
-                   wordPuncts "i",
-                   wordPuncts "have",
-                   word "a"],	["i can has"]),
+ -- XXX Text
+ -- (join<$>sequence [wordPuncts "can",
+ --                   wordPuncts "i",
+ --                   wordPuncts "have",
+ --                   word "a"],
+ --                                ["i can has"]),
 
  ("have",			["has", "hav", "haz a"]),
 
