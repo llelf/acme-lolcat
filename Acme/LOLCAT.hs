@@ -53,7 +53,7 @@ myrun p s = runP p Punct "" s
 
 
 replace :: Parser String -> [Text] -> Text -> Text
-replace pat tos str = repl tos $ Right str
+replace pat tos str = repl (cycle tos) $ Right str
     where repl (t:ts) (Right s) = repl ts $ replaceOne pat t s
           repl _ (Left s) = s
 
