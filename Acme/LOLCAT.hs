@@ -76,7 +76,7 @@ replace pat tos str = repl (cycle tos) $ Right str
 translateT :: Text -> Text
 translateT src
            | n == 1    = base <> " THX"
-           | n == 2    = base <> " THXBYE!"
+           | n == 2    = base <> " THXBYE."
            | otherwise = base
     where
       Just n = OH HAI I CAN HAZ IO? THXBYE
