@@ -42,7 +42,7 @@ Given a list, return a infinity list of shuffled elements from it
 
 
 
-> replaceOne :: Parser String -> Text -> Text -> Either Text Text
+> replaceOne :: Parser' String -> Text -> Text -> Either Text Text
 > replaceOne pat to s | Right s' <- parsed = Right s'
 >                     | otherwise          = Left s
 >     where repl (pref,r) = pref <> to <> T.drop (T.length pref + length r) s
@@ -52,7 +52,7 @@ Given a list, return a infinity list of shuffled elements from it
 
 
 
-> replace :: Parser String -> [Text] -> Text -> Text
+> replace :: Parser' String -> [Text] -> Text -> Text
 > replace pat tos str = repl tos $ Right str
 >     where repl (t:ts) (Right s) = repl ts $ replaceOne pat t s
 >           repl _ (Left s) = s
@@ -79,27 +79,23 @@ Given a list, return a infinity list of shuffled elements from it
 >     toText = T.pack
 
 
-> type Parser = Parsec Text ParserState
-> data ParserState = Word | Punct deriving Eq
+> type Parser' = Parsec Text Char
 
-"string" is Parser for String
-
-> instance IsString (Parser String) where
->     fromString = string
-
-> find :: Parser String -> Parser (Text,String)
+> find :: Parser' String -> Parser' (Text,String)
 > find pat = try (("",) <$> pat)
 >            <|> do c <- anyChar
->                   putState $ if isLetter c then Word else Punct
+>                   putState c
 >                   first (T.cons c) <$> find pat
 
 
 > wend = notFollowedBy letter
 
-> word s = do Punct <- getState
+> word s = do c <- getState
+>             guard . not . isAlpha $ c
 >             string s <* wend
 
-> inside s = do Word <- getState
+> inside s = do a <- getState
+>               guard (isAlpha a)
 >               string s <* letter
 
 
@@ -108,8 +104,11 @@ Given a list, return a infinity list of shuffled elements from it
 > wEnds s = string s <* wend
 
 
+> instance IsString (Parser' String) where
+>     fromString = string
 
-> rules :: [(Parser String, [Text])]
+
+> rules :: [(Parser' String, [Text])]
 
 > rules = [
 >  ("what",                     ["wut", "whut"]),
