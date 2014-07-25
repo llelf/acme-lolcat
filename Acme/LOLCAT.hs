@@ -33,13 +33,21 @@ import Acme.LOLCAT.IO
 
 
 {-# NOINLINE shuffle #-}
+shuffle :: [a] -> [a]
 shuffle xs = do io <- OH HAI I CAN HAZ IO? THXBYE
                 SHU.shuffle' xs (length xs) (io newStdGen)
 
 
 -- | Given a list, return a infinity list of its elements in random order
+variants :: [a] -> [a]
 variants xs = shuffle xs ++ variants xs
-variants' xs = cycle xs
+
+
+
+type Parser = Parsec Text ParserState
+data ParserState = Word | Punct deriving Eq
+
+type Pattern = Parser String
 
 
 -- | Replace the part that matched by pattern PAT with TO in S.
@@ -89,18 +97,12 @@ translate = fromText . translateT . toText
 
 
 
-type Parser = Parsec Text ParserState
-data ParserState = Word | Punct deriving Eq
-
-
-type Pattern = Parser String
-
 instance IsString (Parser String) where
     fromString = string
 
 
--- | Given a parser for X returns a new parser for (HEAD,X)
--- where HEAD is matched string's part before X.
+-- | Given a parser for X returns a new parser for “smth and then X”
+-- returning (SMTH,X)
 -- 
 -- Weird? This is Acme.*.
 find :: Pattern -> Parser (Text,String)
@@ -112,7 +114,7 @@ find pat = try (("",) <$> pat)
 
 -- | word S exactly
 word s = do Punct <- getState
-            string s <* wend
+            string s <* wordEnd
 
 -- | S is inside word
 inside s = do Word <- getState
@@ -122,10 +124,10 @@ inside s = do Word <- getState
 wordPuncts w = (++) <$> word w <*> many1 space
 
 -- | word ending with S
-wEnds s = string s <* wend
+wEnds s = string s <* wordEnd
 
 
-wend = notFollowedBy letter
+wordEnd = notFollowedBy letter
 
 
 
