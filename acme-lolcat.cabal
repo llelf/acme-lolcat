@@ -1,9 +1,8 @@
 name:                acme-lolcat
 version:             0.1
 homepage:            https://github.com/llelf/acme-lolcat
-synopsis:            LOLCAT
-description:
-        LOL
+synopsis:            LOLSPEAK translator
+--description:
 license:             BSD3
 license-file:        LICENSE
 author:              Antonio Nikishaev <me@lelf.lu>

@@ -6,7 +6,8 @@
 --
 -- LOLCAT translator.
 --
--- Roughly based on Perl's <https://metacpan.org/pod/Acme::LOLCAT Acme::LOLCAT>
+-- Roughly based on <https://metacpan.org/pod/Acme::LOLCAT Acme::LOLCAT>
+-- for Perl.
 
 {-# LANGUAGE OverloadedStrings, FlexibleInstances, TupleSections #-}
 {-# LANGUAGE Trustworthy #-}
@@ -101,6 +102,8 @@ instance KindaText String where
     toText = T.pack
 
 
+-- | >>> translate "You too can speak like a lolcat!"
+-- YOU 2 CAN SPEKK LIEK LOLCAT! THXBYE.
 translate :: KindaText s => s -> s
 translate = fromText . translateT . toText
 
