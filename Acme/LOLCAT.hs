@@ -125,17 +125,21 @@ find pat = try (("",) <$> pat)
 
 
 -- | word S exactly
+word :: String -> Parser String
 word s = do Punct <- getState
             string s <* wordEnd
 
 -- | S is inside word
+inside :: String -> Parser String
 inside s = do Word <- getState
               string s <* letter
 
 -- | word S and then any punctuations
+wordPuncts :: String -> Parser String
 wordPuncts w = (++) <$> word w <*> many1 space
 
 -- | word ending with S
+wEnds :: String -> Parser String
 wEnds s = string s <* wordEnd
 
 
