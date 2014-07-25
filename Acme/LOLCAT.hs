@@ -71,10 +71,19 @@ replace pat tos str = repl (cycle tos) $ Right str
           repl _ (Left s)       = s
 
 
-
+{-# NOINLINE translateT #-}
 translateT :: Text -> Text
-translateT src = T.toUpper $ last $ scanl f src rules
-    where f s (pat,repls) = replace pat (variants repls) s
+translateT src
+           | n == 1    = base <> " THX"
+           | n == 2    = base <> " THXBYE!"
+           | otherwise = base
+    where
+      Just n = OH HAI I CAN HAZ IO? THXBYE
+               <*> Just (randomRIO (1,10)) :: Maybe Int
+
+      base = T.toUpper $ last $ scanl f src rules
+      f s (pat,repls) = replace pat (variants repls) s
+
 
 
 
