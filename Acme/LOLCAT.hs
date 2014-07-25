@@ -58,7 +58,7 @@ replace pat tos str = repl (cycle tos) $ Right str
           repl _ (Left s) = s
 
 
-translateT src = last $ scanl f src rules
+translateT src = T.toUpper $ last $ scanl f src rules
     where f s (pat,repls) = replace pat (variants repls) s
 
 
