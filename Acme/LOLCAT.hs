@@ -19,6 +19,7 @@ import qualified Data.Text as T
 
 import Text.Parsec
 import Text.Parsec.Text()
+import Text.Parsec.Prim (runP)
 
 import Control.Applicative ((<$>),(<*),(<*>))
 import Control.Arrow
