@@ -103,8 +103,8 @@ instance KindaText String where
     toText = T.pack
 
 
--- | >>> translate "You too can speak like a lolcat!"
--- YOU 2 CAN SPEKK LIEK LOLCAT! THXBYE.
+-- | >>> translate "Catamorphisms are generalizations of the concept of a fold in functional programming."
+-- "CAT-A-MURRFISMS AR GENERALIZASHUNS OV TEH CONCEPT OV FOLD IN FUNCSHUNAL PROGRAMMNG. THX."
 translate :: KindaText s => s -> s
 translate = fromText . translateT . toText
 
