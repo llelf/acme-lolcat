@@ -164,7 +164,7 @@ rules = [
  ("more",			["moar"]),
  ("my",				["muh", "mah"]),
  ("are",			["r", "is", "ar"]),
- (word "a",			[""]),
+ (" a ",			[" "]),
  ("eese",			["eez"]),
  ("catamorphi",			["cat-a-murrphi"]),
  ("morphi",			["murrphi"]),
