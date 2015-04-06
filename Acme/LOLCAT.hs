@@ -83,7 +83,7 @@ translateT src
       Just n = OH HAI I CAN HAZ IO? THXBYE
                <*> Just (randomRIO (1,10)) :: Maybe Int
 
-      base = T.toUpper $ last $ scanl f src rules
+      base = T.toUpper . last . flip (scanl f) rules . T.toLower $ src
       f s (pat,repls) = replace pat (variants repls) s
 
 
